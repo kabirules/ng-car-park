@@ -9,7 +9,7 @@
         [center]="[lon, lat]"
       >
       <mgl-marker [lngLat]="[lon, lat]"><img src="./assets/img/currentPos.png"/></mgl-marker>
-      <mgl-marker *ngIf="renderMarker" [lngLat]="[lon, lat]"><img src="./assets/img/park.png"/></mgl-marker>
+      <mgl-marker *ngIf="renderMarker" [lngLat]="[parkLon, parkLat]"><img src="./assets/img/park.png"/></mgl-marker>
   </mgl-map>
 </div>
 

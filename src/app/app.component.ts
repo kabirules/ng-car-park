@@ -11,6 +11,8 @@ export class AppComponent implements OnInit {
   location = {};
   lat:number = 0;
   lon:number = 0;
+  parkLat:number = 0;
+  parkLon:number = 0;
   renderMarker:boolean=false;
 
   PARK_LAT:string = 'parkLAT';
@@ -24,10 +26,10 @@ export class AppComponent implements OnInit {
     Observable.interval(5000).subscribe(x => {
       this.updateLocation();
     });
-    //Check if we already parked the car before
-    this.lat = +localStorage.getItem(this.PARK_LAT);
-    this.lon = +localStorage.getItem(this.PARK_LON);
-    if (this.lat!=null && this.lon!=null) {
+    //Check if we already parked the car before.
+    this.parkLat = +localStorage.getItem(this.PARK_LAT);
+    this.parkLon = +localStorage.getItem(this.PARK_LON);
+    if (this.parkLat!=0 && this.parkLon!=0) {
       this.renderMarker = true;
     }
   }
