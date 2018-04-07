@@ -1,8 +1,8 @@
 <div>{{lat|number:'2.1-5'}}, {{lon|number:'2.1-5'}}</div>
 <mgl-map
       [style]="'mapbox://styles/mapbox/streets-v9'"
-      [zoom]="[9]"
+      [zoom]="[16]"
       [center]="[lon, lat]"
-    >
+    ><mgl-marker [lngLat]="[lon, lat]"><img src="http://static.tzjsyxw.cn/js/ckeditor/plugins/smiley/images/5.gif"/></mgl-marker>
   </mgl-map>
     
