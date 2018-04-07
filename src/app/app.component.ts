@@ -45,9 +45,12 @@ export class AppComponent implements OnInit {
   }
 
   park() {
-    //save the current position in localStorage
-    localStorage.setItem(this.PARK_LAT, this.lat.toString());
-    localStorage.setItem(this.PARK_LON, this.lon.toString());
+    // set the current position as park position
+    this.parkLat = this.lat;
+    this.parkLon = this.lon;
+    //save the park position in localStorage
+    localStorage.setItem(this.PARK_LAT, this.parkLat.toString());
+    localStorage.setItem(this.PARK_LON, this.parkLon.toString());
     //make sure the marker is rendered
     this.renderMarker=true;
   }
