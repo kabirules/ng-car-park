@@ -1,15 +1,21 @@
 <div style="margin-left:1%">
+  <!--
   <div>Current position: {{lat|number:'2.1-5'}}, {{lon|number:'2.1-5'}}</div>
-  <div style="margin-bottom: 1%;width: 99%;">
+  -->
+  <div style="margin-top: 1%;margin-bottom: 1%;width: 99%;">
     <button class="btn btn-lg btn-primary btn-block" (click)="park()">Park</button>
   </div>
+  <!--
   <mgl-map
         [style]="'mapbox://styles/mapbox/streets-v9'"
         [zoom]="[16]"
         [center]="[lon, lat]"
+        (load)="map = $event"
       >
-      <mgl-marker [lngLat]="[lon, lat]"><img src="./assets/img/currentPos.png"/></mgl-marker>
+      <mgl-marker [lngLat]="[lon, lat]"><img height="12px" width="12px" src="./assets/img/currentPos.png"/></mgl-marker>
       <mgl-marker *ngIf="renderMarker" [lngLat]="[parkLon, parkLat]"><img src="./assets/img/park.png"/></mgl-marker>
   </mgl-map>
+  -->
+  <div class="mgl-map" id="map"></div>
 </div>
 
