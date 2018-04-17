@@ -1,21 +1,15 @@
 <div style="margin-left:1%">
-  <!--
-  <div>Current position: {{lat|number:'2.1-5'}}, {{lon|number:'2.1-5'}}</div>
-  -->
-  <div style="margin-top: 1%;margin-bottom: 1%;width: 99%;">
-    <button class="btn btn-lg btn-primary btn-block" (click)="park()">Park</button>
+  <div class="row" style="margin-top: 1%;margin-bottom: 1%;width: 100%;">
+    <div style="width:31.7%;margin-left:1.2%;margin-right:0%">
+        <button class="btn btn-lg btn-primary btn-block" (click)="park()">Current location park</button>
+    </div>
+    <div style="width:31.7%;margin-left:1.8%;margin-right:0%;font-size: 28px;text-align: center">
+       {{customParkLat|number:'2.1-5'}}, {{customParkLon|number:'2.1-5'}}
+    </div>
+    <div style="width:31.7%;margin-left:1.8%;margin-right:0%">
+        <button class="btn btn-lg btn-primary btn-block" (click)="customPark()">Click on map park</button>
+    </div>        
   </div>
-  <!--
-  <mgl-map
-        [style]="'mapbox://styles/mapbox/streets-v9'"
-        [zoom]="[16]"
-        [center]="[lon, lat]"
-        (load)="map = $event"
-      >
-      <mgl-marker [lngLat]="[lon, lat]"><img height="12px" width="12px" src="./assets/img/currentPos.png"/></mgl-marker>
-      <mgl-marker *ngIf="renderMarker" [lngLat]="[parkLon, parkLat]"><img src="./assets/img/park.png"/></mgl-marker>
-  </mgl-map>
-  -->
   <div class="mgl-map" id="map"></div>
 </div>
 

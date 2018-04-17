@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import * as mapboxgl from  'mapbox-gl';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -19,11 +20,16 @@ https://angularfirebase.com/lessons/build-realtime-maps-in-angular-with-mapbox-g
 export class AppComponent implements OnInit {
 
   location = {};
+  //Current position
   lat:number = 0;
   lon:number = 0;
+  //Parking position (current)
   parkLat:number = 0;
   parkLon:number = 0;
-  renderMarker:boolean=false;
+  //Parking position (custom)
+  customParkLat:number = 0;
+  customParkLon:number = 0;
+  marker;
 
   PARK_LAT:string = 'parkLAT';
   PARK_LON:string = 'parkLON';
@@ -38,25 +44,47 @@ export class AppComponent implements OnInit {
     Observable.interval(5000).subscribe(x => {
       this.updateLocation();
     });
-    //Check if we already parked the car before.
-    this.parkLat = +localStorage.getItem(this.PARK_LAT);
-    this.parkLon = +localStorage.getItem(this.PARK_LON);
-    if (this.parkLat!=0 && this.parkLon!=0) {
-      this.renderMarker = true;
-    }
-    Object.getOwnPropertyDescriptor(mapboxgl, "accessToken").set('pk..oYdvq_XT79XIefBeuDNFVg');
+    this.buildMap();
+    this.setInitalMarkers();
+    this.setListeners();
+  }
+
+  buildMap() {
+    Object.getOwnPropertyDescriptor(mapboxgl, "accessToken").set(environment.mapbox.accessToken);
     this.map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v9',
-      zoom: 16,
-      center: [this.lon, this.lat]
+      zoom: 16
     });
-    //// Add Marker on longpress
+  }
+
+  //Check if we already parked the car before.
+  setInitalMarkers() {
+    this.parkLat = +localStorage.getItem(this.PARK_LAT);
+    this.parkLon = +localStorage.getItem(this.PARK_LON);
+    if (this.parkLat!=0 && this.parkLon!=0) {
+      this.marker = new mapboxgl.Marker().setLngLat([this.parkLon, this.parkLat]).addTo(this.map);
+    }
+  }
+
+  // Set map listeners and controllers
+  setListeners() {
+    // Set click position
+    this.map.on('click', (event) => {
+      this.customParkLat = event.lngLat.lat;
+      this.customParkLon = event.lngLat.lng;
+    })
+    // Add Marker on longpress (test)
     this.map.on('contextMenu', (event) => {
-      //const coordinates = [event.lngLat.lng, event.lngLat.lat]
-      //const newMarker   = new GeoJson(coordinates, { message: this.message })
-      //this.mapService.createMarker(newMarker)
-    })    
+      alert('contextMenu')
+    })
+    // Add current position controller
+    this.map.addControl(new mapboxgl.GeolocateControl({
+      positionOptions: {
+          enableHighAccuracy: true
+      },
+      trackUserLocation: true
+    }));
   }
 
   updateLocation() {
@@ -65,18 +93,50 @@ export class AppComponent implements OnInit {
         this.location = position.coords;
         this.lat = position.coords.latitude;
         this.lon = position.coords.longitude;
+        this.map.flyTo({
+          center: [this.lon, this.lat]
+        })
       });
    }
   }
 
   park() {
+    //remove the old marker
+    if (this.marker!=null) {
+      this.marker.remove();
+    }
     // set the current position as park position
     this.parkLat = this.lat;
     this.parkLon = this.lon;
     //save the park position in localStorage
     localStorage.setItem(this.PARK_LAT, this.parkLat.toString());
     localStorage.setItem(this.PARK_LON, this.parkLon.toString());
-    //make sure the marker is rendered
-    this.renderMarker=true;
+    // add custom marker
+    //var el = document.createElement('div');
+    //el.innerHTML="<img src=\"./assets/img/park.png\"/>";
+    // make a marker for each feature and add to the map
+    //this.marker = new mapboxgl.Marker(el).setLngLat([this.parkLon, this.parkLat]).addTo(this.map);
+    //add standard marker 
+    this.marker = new mapboxgl.Marker().setLngLat([this.parkLon, this.parkLat]).addTo(this.map);
   }
+
+  customPark() {
+    //remove the old marker
+    if (this.marker!=null) {
+      this.marker.remove();
+    }
+    // set the current position as park position
+    this.parkLat = this.customParkLat;
+    this.parkLon = this.customParkLon;
+    //save the park position in localStorage
+    localStorage.setItem(this.PARK_LAT, this.parkLat.toString());
+    localStorage.setItem(this.PARK_LON, this.parkLon.toString());
+    // add custom marker
+    //var el = document.createElement('div');
+    //el.innerHTML="<img src=\"./assets/img/park.png\"/>";
+    // make a marker for each feature and add to the map
+    //this.marker = new mapboxgl.Marker(el).setLngLat([this.parkLon, this.parkLat]).addTo(this.map);
+    //add standard marker 
+    this.marker = new mapboxgl.Marker().setLngLat([this.parkLon, this.parkLat]).addTo(this.map);
+  }  
 }
