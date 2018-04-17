@@ -23,12 +23,9 @@ export class AppComponent implements OnInit {
   //Current position
   lat:number = 0;
   lon:number = 0;
-  //Parking position (current)
+  //Parking position
   parkLat:number = 0;
   parkLon:number = 0;
-  //Parking position (custom)
-  customParkLat:number = 0;
-  customParkLon:number = 0;
   marker;
 
   PARK_LAT:string = 'parkLAT';
@@ -69,16 +66,10 @@ export class AppComponent implements OnInit {
 
   // Set map listeners and controllers
   setListeners() {
-    // Set click position
-    this.map.on('click', (event) => {
-      this.customParkLat = event.lngLat.lat;
-      this.customParkLon = event.lngLat.lng;
+    // Add Marker on longpress 
+    this.map.on('contextmenu', (event) => {
+      this.park(event.lngLat.lat, event.lngLat.lng);
     })
-    // Add Marker on longpress (not working, possibly mapbox bug)
-    this.map.on('contextMenu', (event) => {
-      alert('contextMenu');
-    })
-    // Add current position controller
     this.map.addControl(new mapboxgl.GeolocateControl({
       positionOptions: {
           enableHighAccuracy: true
@@ -87,6 +78,7 @@ export class AppComponent implements OnInit {
     }));
   }
 
+  //update map with current position
   updateLocation() {
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(position => {
@@ -100,14 +92,19 @@ export class AppComponent implements OnInit {
    }
   }
 
-  park() {
+  //set a marker on params position or current postion if no params
+  park(lat?, lon?) {
     //remove the old marker
     if (this.marker!=null) {
       this.marker.remove();
     }
-    // set the current position as park position
-    this.parkLat = this.lat;
-    this.parkLon = this.lon;
+    if (lat==null && lon==null) { 
+      this.parkLat = this.lat;
+      this.parkLon = this.lon;
+    } else { 
+      this.parkLat = lat;
+      this.parkLon = lon;    
+    }
     //save the park position in localStorage
     localStorage.setItem(this.PARK_LAT, this.parkLat.toString());
     localStorage.setItem(this.PARK_LON, this.parkLon.toString());
@@ -119,24 +116,4 @@ export class AppComponent implements OnInit {
     //add standard marker 
     this.marker = new mapboxgl.Marker().setLngLat([this.parkLon, this.parkLat]).addTo(this.map);
   }
-
-  customPark() {
-    //remove the old marker
-    if (this.marker!=null) {
-      this.marker.remove();
-    }
-    // set the current position as park position
-    this.parkLat = this.customParkLat;
-    this.parkLon = this.customParkLon;
-    //save the park position in localStorage
-    localStorage.setItem(this.PARK_LAT, this.parkLat.toString());
-    localStorage.setItem(this.PARK_LON, this.parkLon.toString());
-    // add custom marker
-    //var el = document.createElement('div');
-    //el.innerHTML="<img src=\"./assets/img/park.png\"/>";
-    // make a marker for each feature and add to the map
-    //this.marker = new mapboxgl.Marker(el).setLngLat([this.parkLon, this.parkLat]).addTo(this.map);
-    //add standard marker 
-    this.marker = new mapboxgl.Marker().setLngLat([this.parkLon, this.parkLat]).addTo(this.map);
-  }  
 }
