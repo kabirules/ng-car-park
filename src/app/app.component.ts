@@ -74,9 +74,9 @@ export class AppComponent implements OnInit {
       this.customParkLat = event.lngLat.lat;
       this.customParkLon = event.lngLat.lng;
     })
-    // Add Marker on longpress (test)
+    // Add Marker on longpress (not working, possibly mapbox bug)
     this.map.on('contextMenu', (event) => {
-      alert('contextMenu')
+      alert('contextMenu');
     })
     // Add current position controller
     this.map.addControl(new mapboxgl.GeolocateControl({
